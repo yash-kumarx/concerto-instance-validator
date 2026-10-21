@@ -1,4 +1,4 @@
-# concerto-rs
+# concerto-instance-validator
 
 Independent prototype for my GSoC 2026 proposal, not the same project as my mentors' 2025 experiment accordproject/concerto-validate-rs. The code as submitted with the proposal is tagged `proposal-mar-2026`.
 
@@ -70,8 +70,12 @@ cargo fmt --check
 cargo run -p concerto-cli -- validate \
   --model ./model.json \
   --instance ./instance.json \
-  --type "org.example@1.0.0.Person"
+  --type "org.map@1.0.0.Inspection"
 ```
+
+The sample instance is invalid on purpose: one map value is not a `Boolean` and
+one map key is not a `DateTime`. `validate` reports both errors, not just the
+first one, and exits with status 1.
 
 Other subcommands:
 
@@ -81,7 +85,7 @@ cargo run -p concerto-cli -- info --model ./model.json
 cargo run -p concerto-cli -- bench \
   --model ./model.json \
   --instance ./instance.json \
-  --type "org.example@1.0.0.Person" \
+  --type "org.map@1.0.0.Inspection" \
   --iterations 1000
 ```
 
