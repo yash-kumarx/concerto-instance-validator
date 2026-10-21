@@ -981,7 +981,7 @@ mod advanced_semantics {
             ErrorKind::TypeMismatch { .. }
         ));
         assert!(matches!(
-            error_at_path(&result, "$.checks.2026-03-30T12:00:00Z").error_type,
+            error_at_path(&result, "$.checks[\"2026-03-30T12:00:00Z\"]").error_type,
             ErrorKind::TypeMismatch { .. }
         ));
     }

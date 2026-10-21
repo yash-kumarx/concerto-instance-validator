@@ -830,14 +830,16 @@ fn validate_map(
             continue;
         }
 
-        let key_path = format!("{path}[{map_key:?}]");
-        validate_map_key(&map_decl.key_type, map_key, &key_path, prop_name, errors);
+        // keys are arbitrary strings, so always quote them: in dot notation a datetime key
+        // like `...T12:00:00.000Z` would read as nested properties
+        let entry_path = format!("{path}[{}]", Value::from(map_key.as_str()));
+        validate_map_key(&map_decl.key_type, map_key, &entry_path, prop_name, errors);
         validate_type(
             model_manager,
             map_val,
             &map_decl.value_type,
             &map_decl.namespace,
-            &format!("{path}.{map_key}"),
+            &entry_path,
             prop_name,
             errors,
         )?;
