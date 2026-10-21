@@ -10,9 +10,12 @@
  *   cargo build --release -p concerto-ffi
  *
  * memory rules:
- *   - returned char* values belong to the library
- *   - free them with concerto_free_string()
+ *   - every char* returned here is owned by the caller. release it with
+ *     concerto_free_string(), never with free()
  *   - ConcertoModelManager* must be freed with concerto_model_manager_free()
+ *
+ * a panic inside the library is reported as an error string. it never unwinds
+ * into the caller.
  */
 
 #ifdef __cplusplus
