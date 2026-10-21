@@ -63,3 +63,23 @@ jobs:
 
       - name: node wasm smoke
         run: node concerto-wasm/scripts/node_smoke.mjs
+
+  # builds the workspace with the oldest Rust that `rust-version` promises, so the
+  # promise can't silently go stale again. `regress` uses let-chains, hence 1.88
+  msrv:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: install rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.88.0
+
+      - name: cache rust build
+        uses: Swatinem/rust-cache@v2
+
+      - name: check
+        run: cargo check --locked --workspace

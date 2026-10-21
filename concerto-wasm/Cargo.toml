@@ -6,7 +6,7 @@ description = "WASM wrapper for the Concerto validator POC"
 license = "Apache-2.0"
 repository = "https://github.com/yash-kumarx/concerto-instance-validator"
 keywords = ["concerto", "wasm", "validation", "accord-project"]
-rust-version = "1.75"
+rust-version = "1.88"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

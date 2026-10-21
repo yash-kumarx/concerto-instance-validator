@@ -6,7 +6,7 @@ description = "Conformance checks for the Concerto validator POC"
 license = "Apache-2.0"
 repository = "https://github.com/yash-kumarx/concerto-instance-validator"
 keywords = ["concerto", "validation", "conformance", "accord-project"]
-rust-version = "1.75"
+rust-version = "1.88"
 
 [dependencies]
 concerto-core = { path = "../concerto-core" }

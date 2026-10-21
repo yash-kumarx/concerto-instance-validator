@@ -7,7 +7,7 @@ license = "Apache-2.0"
 # same repo for now, split crates can come later if needed
 repository = "https://github.com/yash-kumarx/concerto-instance-validator"
 keywords = ["concerto", "validation", "cli", "accord-project"]
-rust-version = "1.75"
+rust-version = "1.88"
 
 [[bin]]
 name = "concerto-rs"
