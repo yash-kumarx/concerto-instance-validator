@@ -1,4 +1,4 @@
-# concerto-rs
+# concerto-instance-validator
 
 Independent prototype for my GSoC 2026 proposal, not the same project as my mentors' 2025 experiment accordproject/concerto-validate-rs. The code as submitted with the proposal is tagged `proposal-mar-2026`.
 
