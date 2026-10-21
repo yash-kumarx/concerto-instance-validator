@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Conformance checks for the Concerto validator POC"
 license = "Apache-2.0"
-repository = "https://github.com/accordproject/concerto-validate-rs"
+repository = "https://github.com/yash-kumarx/concerto-instance-validator"
 keywords = ["concerto", "validation", "conformance", "accord-project"]
 rust-version = "1.75"
 

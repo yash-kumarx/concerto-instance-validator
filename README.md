@@ -1,5 +1,7 @@
 # concerto-rs
 
+Independent prototype for my GSoC 2026 proposal, not the same project as my mentors' 2025 experiment accordproject/concerto-validate-rs. The code as submitted with the proposal is tagged `proposal-mar-2026`.
+
 My GSoC 2026 POC for porting Concerto's entity validation to Rust.
 
 Concerto is a schema language used around legal contracts and related data. The
@@ -10,7 +12,7 @@ Node process hanging around too.
 Our mentor called entity validation the hotspot, so that's what my repo
 focuses on. CTO parsing is not part of this POC. I left it out intentionally so the prototype could focus on entity validation first.
 
-Repository: [accordproject/concerto-validate-rs](https://github.com/accordproject/concerto-validate-rs)
+Repository: [yash-kumarx/concerto-instance-validator](https://github.com/yash-kumarx/concerto-instance-validator)
 
 ## Why
 
