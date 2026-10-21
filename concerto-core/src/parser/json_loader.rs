@@ -22,7 +22,7 @@ use crate::declaration::{
 };
 use crate::error::ConcertoError;
 use crate::model_file::{Imports, ModelFile};
-use crate::property::{NumericValidator, Property, PropertyType, StringValidator};
+use crate::property::{NumericValidator, Property, PropertyType, StringRegex, StringValidator};
 
 const CLASS_FIELD: &str = "$class";
 const MODEL_NAMESPACE_FIELD: &str = "namespace";
@@ -484,17 +484,14 @@ fn parse_string_validator_node(
             let pattern = validator
                 .get("pattern")
                 .and_then(Value::as_str)
-                .map(str::to_string)
                 .ok_or_else(|| {
                     ConcertoError::Parse("StringRegexValidator is missing 'pattern'".to_string())
                 })?;
-
-            regex::Regex::new(&pattern).map_err(|error| {
-                ConcertoError::Semantic(format!("bad regex '{pattern}': {error}"))
-            })?;
+            // concerto-core hands `flags` straight to `new RegExp`
+            let flags = validator.get("flags").and_then(Value::as_str).unwrap_or("");
 
             Ok(Some(StringValidator {
-                regex: Some(pattern),
+                regex: Some(StringRegex::new(pattern, flags)?),
                 min_length: None,
                 max_length: None,
             }))

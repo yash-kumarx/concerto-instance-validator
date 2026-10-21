@@ -1,0 +1,13 @@
+{
+  "name": "regexes follow JavaScript semantics: flags, lookahead and UTF-16 matching",
+  "model_files": [
+    "models/regex_model.json"
+  ],
+  "instance_file": "instances/account_regex_valid.json",
+  "type_name": "org.regex@1.0.0.Account",
+  "expect": {
+    "valid": true,
+    "error_count": 0,
+    "error_paths": []
+  }
+}

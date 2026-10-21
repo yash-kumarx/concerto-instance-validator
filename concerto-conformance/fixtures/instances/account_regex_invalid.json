@@ -1,0 +1,8 @@
+{
+  "$class": "org.regex@1.0.0.Account",
+  "code": "abc",
+  "zip": "١٢٣٤٥",
+  "pin": "abcdef",
+  "glyph": "😀",
+  "half": "😀"
+}

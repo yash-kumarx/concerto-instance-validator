@@ -1,0 +1,16 @@
+{
+  "name": "regex \\d only matches ASCII digits, as in JavaScript",
+  "model_files": [
+    "models/regex_model.json"
+  ],
+  "instance_file": "instances/account_regex_invalid.json",
+  "type_name": "org.regex@1.0.0.Account",
+  "expect": {
+    "valid": false,
+    "error_count": 2,
+    "error_paths": [
+      "$.zip",
+      "$.pin"
+    ]
+  }
+}

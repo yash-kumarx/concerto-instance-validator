@@ -32,7 +32,8 @@ That is basically the shape of this workspace.
 - collect all validation errors, not just the first one
 - required fields, unknown fields, and `$class` checks
 - primitive property types: `String`, `Integer`, `Long`, `Double`, `Boolean`, `DateTime`
-- string regex and length validators
+- string regex validators, with JavaScript regex semantics (flags included), and
+  length validators
 - numeric lower/upper bounds for integer, long, and double
 - inheritance across the full supertype chain
 - enum validation

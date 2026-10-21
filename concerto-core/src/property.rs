@@ -4,6 +4,8 @@
 //! it into something the validator can work with without re-parsing JSON nodes
 //! over and over.
 
+use crate::error::ConcertoError;
+
 /// One property declared on a class-like type.
 ///
 /// This is the flattened version after loading, not the raw metamodel JSON node.
@@ -73,12 +75,89 @@ impl PropertyType {
 /// the same string property in practice.
 #[derive(Debug, Clone, PartialEq)]
 pub struct StringValidator {
-    /// Optional regex pattern.
-    pub regex: Option<String>,
+    /// Optional regex, compiled when the model loads.
+    pub regex: Option<StringRegex>,
     /// Optional inclusive minimum length.
     pub min_length: Option<usize>,
     /// Optional inclusive maximum length.
     pub max_length: Option<usize>,
+}
+
+/// A `regex=` validator, compiled once when the model loads.
+///
+/// Concerto patterns are JavaScript regular expressions, so they're compiled with `regress`,
+/// which follows ECMAScript semantics: flags, ASCII-only `\d`, `\w` and `\b`, lookaround and
+/// backreferences all behave as they do in concerto-core. Like the JS `RegExp` that
+/// concerto-core uses by default, it backtracks, so a pathological pattern can be slow on some
+/// inputs. Patterns come from the model, so treat models as trusted input.
+#[derive(Debug, Clone)]
+pub struct StringRegex {
+    /// The pattern as written in the model, without the surrounding slashes.
+    pub pattern: String,
+    /// The JavaScript flags, such as `"i"`.
+    pub flags: String,
+    regex: regress::Regex,
+}
+
+impl PartialEq for StringRegex {
+    fn eq(&self, other: &Self) -> bool {
+        self.pattern == other.pattern && self.flags == other.flags
+    }
+}
+
+impl StringRegex {
+    /// Compiles `pattern` with JavaScript `flags`, rejecting what `new RegExp` would reject.
+    ///
+    /// # Errors
+    ///
+    /// Returns `ConcertoError::Semantic` if the flags or the pattern are invalid.
+    pub fn new(pattern: &str, flags: &str) -> Result<Self, ConcertoError> {
+        // same rules as `new RegExp`: known flags only, each at most once, not both `u` and `v`
+        let mut seen = String::new();
+        for flag in flags.chars() {
+            if !"dgimsuvy".contains(flag) || seen.contains(flag) {
+                return Err(ConcertoError::Semantic(format!(
+                    "bad regex flags '{flags}'"
+                )));
+            }
+            seen.push(flag);
+        }
+        if seen.contains('u') && seen.contains('v') {
+            return Err(ConcertoError::Semantic(format!(
+                "bad regex flags '{flags}'"
+            )));
+        }
+
+        let regex = regress::Regex::with_flags(pattern, flags)
+            .map_err(|error| ConcertoError::Semantic(format!("bad regex '{pattern}': {error}")))?;
+
+        Ok(Self {
+            pattern: pattern.to_string(),
+            flags: flags.to_string(),
+            regex,
+        })
+    }
+
+    /// Tests `value` the way concerto-core's `RegExp.test` does.
+    pub fn is_match(&self, value: &str) -> bool {
+        let found = if value.is_ascii() {
+            // ASCII reads the same as UTF-8, UTF-16 and UCS-2, so skip the conversion
+            self.regex.find(value)
+        } else {
+            // JS strings are UTF-16, and without `u` or `v` a regex sees each code unit on
+            // its own, so for example `.` matches only half of an emoji
+            let text: Vec<u16> = value.encode_utf16().collect();
+            if self.flags.contains(['u', 'v']) {
+                self.regex.find_from_utf16(&text, 0).next()
+            } else {
+                self.regex.find_from_ucs2(&text, 0).next()
+            }
+        };
+
+        // concerto-core resets `lastIndex` before every test, so `g` changes nothing and a
+        // sticky (`y`) regex has to match at the very start
+        found.is_some_and(|m| !self.flags.contains('y') || m.start() == 0)
+    }
 }
 
 /// Numeric lower/upper bound validator.

@@ -1,16 +1,10 @@
 //! String validation helpers.
 //!
 //! Small file, still worth having. Keeps the regex and length logic out of the
-//! main validator walk and caches regexes so repeated runs are less wasteful.
+//! main validator walk. Regexes are compiled once, when the model loads.
 
 use crate::property::StringValidator;
 use crate::validator::instance_validator::{ErrorKind, ValidationError};
-use once_cell::sync::Lazy;
-use regex::Regex;
-use std::collections::HashMap;
-use std::sync::Mutex;
-
-static REGEX_CACHE: Lazy<Mutex<HashMap<String, Regex>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 pub(crate) fn validate_string(
     value: &str,
@@ -25,29 +19,16 @@ pub(crate) fn validate_string(
         None => return errors,
     };
 
-    if let Some(pattern) = &string_validator.regex {
-        // regex validity is checked when the model loads. if compilation fails
-        // here something else is badly off, so we just treat it as non-match
-        let is_match = {
-            let mut cache = REGEX_CACHE
-                .lock()
-                .unwrap_or_else(|poisoned| poisoned.into_inner());
-
-            if !cache.contains_key(pattern) {
-                if let Ok(re) = Regex::new(pattern) {
-                    cache.insert(pattern.clone(), re);
-                }
-            }
-
-            cache.get(pattern).is_some_and(|re| re.is_match(value))
-        };
-
-        if !is_match {
+    if let Some(regex) = &string_validator.regex {
+        if !regex.is_match(value) {
             errors.push(ValidationError {
                 path: path.to_string(),
-                message: format!("'{}' doesn't match /{}/", value, pattern),
+                message: format!(
+                    "'{}' doesn't match /{}/{}",
+                    value, regex.pattern, regex.flags
+                ),
                 error_type: ErrorKind::PatternMismatch {
-                    pattern: pattern.clone(),
+                    pattern: regex.pattern.clone(),
                 },
             });
         }
