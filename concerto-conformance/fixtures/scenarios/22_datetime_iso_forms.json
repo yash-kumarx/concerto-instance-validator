@@ -1,0 +1,13 @@
+{
+  "name": "datetime accepts the ISO 8601 forms concerto-core accepts",
+  "model_files": [
+    "models/meeting_model.json"
+  ],
+  "instance_file": "instances/meeting_iso_forms.json",
+  "type_name": "org.meeting@1.0.0.Meeting",
+  "expect": {
+    "valid": true,
+    "error_count": 0,
+    "error_paths": []
+  }
+}

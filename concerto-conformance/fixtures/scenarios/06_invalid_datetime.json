@@ -1,5 +1,5 @@
 {
-  "name": "datetime field rejects non-rfc3339 string",
+  "name": "datetime field rejects a string that is not an ISO 8601 date",
   "model_files": [
     "models/person_model.json"
   ],

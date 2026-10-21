@@ -1,0 +1,43 @@
+{
+  "$class": "concerto.metamodel@1.0.0.Model",
+  "namespace": "org.meeting@1.0.0",
+  "declarations": [
+    {
+      "$class": "concerto.metamodel@1.0.0.ConceptDeclaration",
+      "name": "Meeting",
+      "isAbstract": false,
+      "properties": [
+        {
+          "$class": "concerto.metamodel@1.0.0.DateTimeProperty",
+          "name": "exact",
+          "isArray": false,
+          "isOptional": false
+        },
+        {
+          "$class": "concerto.metamodel@1.0.0.DateTimeProperty",
+          "name": "local",
+          "isArray": false,
+          "isOptional": false
+        },
+        {
+          "$class": "concerto.metamodel@1.0.0.DateTimeProperty",
+          "name": "minute",
+          "isArray": false,
+          "isOptional": false
+        },
+        {
+          "$class": "concerto.metamodel@1.0.0.DateTimeProperty",
+          "name": "spaced",
+          "isArray": false,
+          "isOptional": false
+        },
+        {
+          "$class": "concerto.metamodel@1.0.0.DateTimeProperty",
+          "name": "day",
+          "isArray": false,
+          "isOptional": false
+        }
+      ]
+    }
+  ]
+}

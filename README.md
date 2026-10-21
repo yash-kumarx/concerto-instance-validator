@@ -53,6 +53,13 @@ That is basically the shape of this workspace.
 - upstream cucumber-based conformance wiring
 - `@openapi` decorator behavior
 - broader runtime features outside entity validation
+- identifiers: `identified by` isn't modelled, so empty identifiers aren't
+  reported
+
+**DateTime differs from concerto-core on purpose.** concerto-core accepts
+anything dayjs can parse, including impossible dates that it rolls over
+(`2026-02-30` becomes March 2nd) and bare years like `2026`. This port accepts
+ISO 8601 dates and date-times, with or without an offset, and rejects the rest.
 
 ## Build And Run
 

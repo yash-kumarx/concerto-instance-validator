@@ -629,15 +629,15 @@ fn validate_datetime_property(
 ) {
     match val.as_str() {
         Some(datetime) => {
-            if chrono::DateTime::parse_from_rfc3339(datetime).is_err() {
+            if !is_iso_datetime(datetime) {
                 errors.push(ValidationError {
                     path: path.to_string(),
                     message: format!(
-                        "'{}' should be rfc3339 datetime, got {:?}",
+                        "'{}' should be an ISO 8601 datetime, got {:?}",
                         prop_name, datetime
                     ),
                     error_type: ErrorKind::TypeMismatch {
-                        expected: "DateTime (RFC 3339)".to_string(),
+                        expected: "DateTime (ISO 8601)".to_string(),
                         found: format!("String ({datetime})"),
                     },
                 });
@@ -860,15 +860,15 @@ fn validate_map_key(
             errors.append(&mut key_errors);
         }
         PropertyType::DateTime => {
-            if chrono::DateTime::parse_from_rfc3339(map_key).is_err() {
+            if !is_iso_datetime(map_key) {
                 errors.push(ValidationError {
                     path: path.to_string(),
                     message: format!(
-                        "map key for '{}' should be rfc3339 datetime, got {:?}",
+                        "map key for '{}' should be an ISO 8601 datetime, got {:?}",
                         prop_name, map_key
                     ),
                     error_type: ErrorKind::TypeMismatch {
-                        expected: "DateTime (RFC 3339)".to_string(),
+                        expected: "DateTime (ISO 8601)".to_string(),
                         found: "String".to_string(),
                     },
                 });
@@ -948,6 +948,39 @@ fn json_type_name(value: &Value) -> &'static str {
         Value::Array(_) => "Array",
         Value::Object(_) => "Object",
     }
+}
+
+/// Checks a DateTime string the way concerto-core does, without dayjs's quirks.
+///
+/// concerto-core accepts whatever `dayjs.utc(value).isValid()` accepts. That covers the
+/// ISO 8601 forms in real use: a date-time with an offset (`2026-10-21T10:00:00Z`), one
+/// without, which dayjs reads as UTC (`2026-10-21T10:00:00`), and a plain date
+/// (`2026-10-21`). dayjs also rolls impossible dates over (`2026-02-30` becomes March 2nd)
+/// and accepts odd shapes such as a bare year. Those are rejected here on purpose.
+fn is_iso_datetime(value: &str) -> bool {
+    const LOCAL_FORMATS: &[&str] = &[
+        "%Y-%m-%dT%H:%M:%S%.f",
+        "%Y-%m-%dT%H:%M",
+        "%Y-%m-%d %H:%M:%S%.f",
+        "%Y-%m-%d %H:%M",
+    ];
+
+    // chrono skips whitespace before numeric fields, so "2026- 10-21" would parse. the
+    // only whitespace allowed is a single space between the date and the time
+    let mut whitespace = value.match_indices(char::is_whitespace);
+    match (whitespace.next(), whitespace.next()) {
+        (None, _) => {}
+        (Some((at, " ")), None)
+            if value[..at].ends_with(|c: char| c.is_ascii_digit())
+                && value[at + 1..].starts_with(|c: char| c.is_ascii_digit()) => {}
+        _ => return false,
+    }
+
+    chrono::DateTime::parse_from_rfc3339(value).is_ok()
+        || LOCAL_FORMATS
+            .iter()
+            .any(|format| chrono::NaiveDateTime::parse_from_str(value, format).is_ok())
+        || chrono::NaiveDate::parse_from_str(value, "%Y-%m-%d").is_ok()
 }
 
 /// Reads `value` as a Concerto `Integer` or `Long`.

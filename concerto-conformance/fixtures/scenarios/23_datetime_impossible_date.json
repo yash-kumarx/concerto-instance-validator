@@ -1,0 +1,15 @@
+{
+  "name": "datetime rejects impossible dates, which concerto-core's dayjs rolls over (deliberate difference)",
+  "model_files": [
+    "models/meeting_model.json"
+  ],
+  "instance_file": "instances/meeting_impossible_date.json",
+  "type_name": "org.meeting@1.0.0.Meeting",
+  "expect": {
+    "valid": false,
+    "error_count": 1,
+    "error_paths": [
+      "$.day"
+    ]
+  }
+}

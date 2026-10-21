@@ -592,7 +592,7 @@ mod type_checking {
 
         assert!(matches!(
             &error_at_path(&result, "$.dateOfBirth").error_type,
-            ErrorKind::TypeMismatch { expected, .. } if expected == "DateTime (RFC 3339)"
+            ErrorKind::TypeMismatch { expected, .. } if expected == "DateTime (ISO 8601)"
         ));
     }
 

@@ -39,7 +39,7 @@ pub enum PropertyType {
     Long(Option<NumericValidator<i64>>),
     /// Double with optional range limits.
     Double(Option<NumericValidator<f64>>),
-    /// RFC 3339 date-time string.
+    /// ISO 8601 date-time string.
     DateTime,
     /// Relationship URI that points at another declaration.
     Relationship {
