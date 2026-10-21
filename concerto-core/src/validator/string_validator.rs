@@ -34,15 +34,16 @@ pub(crate) fn validate_string(
         }
     }
 
-    // .len() counts bytes. needed chars() here or unicode strings get judged
-    // by utf-8 storage size, which is obviously not what the model means
-    let char_count = value.chars().count();
+    // .len() counts bytes and .chars() counts code points, but concerto-core checks
+    // javascript's `value.length`, which counts utf-16 code units. those only differ
+    // outside the BMP: an emoji has length 2 there
+    let length = value.encode_utf16().count();
 
     if let Some(min_length) = string_validator.min_length {
-        if char_count < min_length {
+        if length < min_length {
             errors.push(ValidationError {
                 path: path.to_string(),
-                message: format!("'{property_name}' is too short: {char_count} < {min_length}"),
+                message: format!("'{property_name}' is too short: {length} < {min_length}"),
                 error_type: ErrorKind::ConstraintViolation {
                     constraint: format!("minLength={min_length}"),
                 },
@@ -51,10 +52,10 @@ pub(crate) fn validate_string(
     }
 
     if let Some(max_length) = string_validator.max_length {
-        if char_count > max_length {
+        if length > max_length {
             errors.push(ValidationError {
                 path: path.to_string(),
-                message: format!("'{property_name}' is too long: {char_count} > {max_length}"),
+                message: format!("'{property_name}' is too long: {length} > {max_length}"),
                 error_type: ErrorKind::ConstraintViolation {
                     constraint: format!("maxLength={max_length}"),
                 },

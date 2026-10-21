@@ -1,0 +1,15 @@
+{
+  "name": "an emoji exceeds a maxLength of 1",
+  "model_files": [
+    "models/length_model.json"
+  ],
+  "instance_file": "instances/profile_length_invalid.json",
+  "type_name": "org.length@1.0.0.Profile",
+  "expect": {
+    "valid": false,
+    "error_count": 1,
+    "error_paths": [
+      "$.initial"
+    ]
+  }
+}

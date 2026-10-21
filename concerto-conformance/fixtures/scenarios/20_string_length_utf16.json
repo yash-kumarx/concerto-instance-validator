@@ -1,0 +1,13 @@
+{
+  "name": "string length counts UTF-16 code units, so an emoji has length 2",
+  "model_files": [
+    "models/length_model.json"
+  ],
+  "instance_file": "instances/profile_length_valid.json",
+  "type_name": "org.length@1.0.0.Profile",
+  "expect": {
+    "valid": true,
+    "error_count": 0,
+    "error_paths": []
+  }
+}

@@ -163,7 +163,9 @@ JSON number.
 
 **String length had a unicode footgun.** `.len()` counts bytes. Needed
 `.chars().count()`. Caught that while checking non-ASCII strings and it would
-have been a very embarrassing bug to leave in.
+have been a very embarrassing bug to leave in. Then it turned out concerto-core
+checks JavaScript's `value.length`, which counts UTF-16 code units, so an emoji
+counts as two. It's `encode_utf16().count()` now.
 
 **The model manager got bigger than planned.** I expected it to just hold a
 `HashMap`. Then imports, versionless lookups, and requested-type vs instance
