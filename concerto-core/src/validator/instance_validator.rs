@@ -24,6 +24,31 @@ use crate::property::{NumericValidator, Property, PropertyType, StringValidator}
 use crate::validator::{numeric_validator, string_validator, type_resolver};
 
 const CLASS_FIELD: &str = "$class";
+
+/// Property names Concerto reserves for itself, mirroring `reservedProperties` in
+/// concerto-core's `modelutil.ts`.
+///
+/// concerto-core skips these when it looks for undeclared properties and when it walks
+/// the entries of a map, and its serializer writes several of them: `$identifier` on
+/// identified types, `$timestamp` on events and transactions, and `$class` inside maps.
+const RESERVED_PROPERTIES: &[&str] = &[
+    "$class",
+    "$identifier",
+    "$timestamp",
+    "$id",
+    "$classDeclaration",
+    "$namespace",
+    "$type",
+    "$modelManager",
+    "$validator",
+    "$identifierFieldName",
+    "$imports",
+    "$superTypes",
+];
+
+fn is_system_property(name: &str) -> bool {
+    RESERVED_PROPERTIES.contains(&name)
+}
 const ROOT_PATH: &str = "$";
 const RESOURCE_PREFIX: &str = "resource:";
 
@@ -370,7 +395,7 @@ fn check_unknown_properties(
     // rule is more useful and it matched most of the fixtures i was using
     if let Some(obj) = instance.as_object() {
         for key in obj.keys() {
-            if key == CLASS_FIELD {
+            if is_system_property(key) {
                 continue;
             }
 
@@ -394,7 +419,7 @@ fn validate_present_properties(
 ) -> Result<(), ConcertoError> {
     if let Some(obj) = instance.as_object() {
         for (name, val) in obj {
-            if name == CLASS_FIELD {
+            if is_system_property(name) {
                 continue;
             }
 
@@ -801,6 +826,10 @@ fn validate_map(
     };
 
     for (map_key, map_val) in obj {
+        if is_system_property(map_key) {
+            continue;
+        }
+
         let key_path = format!("{path}[{map_key:?}]");
         validate_map_key(&map_decl.key_type, map_key, &key_path, prop_name, errors);
         validate_type(

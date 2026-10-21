@@ -1,0 +1,13 @@
+{
+  "name": "concerto system properties are not undeclared fields",
+  "model_files": [
+    "models/person_model.json"
+  ],
+  "instance_file": "instances/person_system_properties.json",
+  "type_name": "org.example@1.0.0.Person",
+  "expect": {
+    "valid": true,
+    "error_count": 0,
+    "error_paths": []
+  }
+}

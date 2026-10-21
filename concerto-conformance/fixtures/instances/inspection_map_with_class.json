@@ -1,0 +1,7 @@
+{
+  "$class": "org.map@1.0.0.Inspection",
+  "checks": {
+    "$class": "org.map@1.0.0.Checklist",
+    "2026-03-30T12:00:00Z": true
+  }
+}

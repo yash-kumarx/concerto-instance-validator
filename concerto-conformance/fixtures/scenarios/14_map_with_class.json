@@ -1,0 +1,13 @@
+{
+  "name": "map serialized with its $class is valid",
+  "model_files": [
+    "models/map_model.json"
+  ],
+  "instance_file": "instances/inspection_map_with_class.json",
+  "type_name": "org.map@1.0.0.Inspection",
+  "expect": {
+    "valid": true,
+    "error_count": 0,
+    "error_paths": []
+  }
+}
