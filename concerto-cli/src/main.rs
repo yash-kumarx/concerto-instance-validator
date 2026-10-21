@@ -267,7 +267,7 @@ fn sorted_namespaces(mm: &ModelManager) -> Vec<&str> {
 
 fn print_class_like(kind: &str, class_decl: &ClassDeclaration) {
     let mut props = class_decl.properties.iter().collect::<Vec<_>>();
-    props.sort_by(|(left_name, _), (right_name, _)| left_name.cmp(right_name));
+    props.sort_by_key(|(left_name, _)| *left_name);
 
     println!("{kind} {} ({} properties)", class_decl.name, props.len());
 

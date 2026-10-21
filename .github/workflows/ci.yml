@@ -12,9 +12,12 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v4
 
+      # pinned, so that a new Rust release and its new clippy lints can't turn CI
+      # red on their own. bump this (and Cargo.lock) on purpose instead
       - name: install rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: 1.99.0
           targets: wasm32-unknown-unknown
           components: clippy, rustfmt
 
@@ -30,19 +33,19 @@ jobs:
         run: cargo fmt --check
 
       - name: clippy
-        run: cargo clippy --workspace -- -D warnings
+        run: cargo clippy --locked --workspace -- -D warnings
 
       - name: workspace tests
-        run: cargo test --workspace
+        run: cargo test --locked --workspace
 
       - name: conformance tests
-        run: cargo test --package concerto-conformance -- --nocapture
+        run: cargo test --locked --package concerto-conformance -- --nocapture
 
       - name: build cli
-        run: cargo build --release --package concerto-cli
+        run: cargo build --locked --release --package concerto-cli
 
       - name: build ffi
-        run: cargo build --release --package concerto-ffi
+        run: cargo build --locked --release --package concerto-ffi
 
       - name: ffi smoke demo
         run: python3 concerto-ffi/demo/demo.py
