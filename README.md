@@ -156,8 +156,9 @@ runtime feels random.
 
 **`serde_json::Number` is annoying here.** Rust obviously cares about integer vs
 float. JSON kind of does, kind of doesn't. JS mostly doesn't. Turns out the
-right compatibility move was: Integer/Long require `is_i64()`, Double accepts
-any JSON number.
+right compatibility move was: Integer/Long accept any whole number, `30.0`
+included, since after `JSON.parse` concerto-core sees `30`. Double accepts any
+JSON number.
 
 **String length had a unicode footgun.** `.len()` counts bytes. Needed
 `.chars().count()`. Caught that while checking non-ASCII strings and it would

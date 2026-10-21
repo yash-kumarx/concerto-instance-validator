@@ -1,0 +1,13 @@
+{
+  "name": "integer field accepts a whole-number float, as concerto-core does",
+  "model_files": [
+    "models/person_model.json"
+  ],
+  "instance_file": "instances/person_whole_float_age.json",
+  "type_name": "org.example@1.0.0.Person",
+  "expect": {
+    "valid": true,
+    "error_count": 0,
+    "error_paths": []
+  }
+}

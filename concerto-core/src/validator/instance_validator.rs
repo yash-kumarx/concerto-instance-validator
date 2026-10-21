@@ -592,8 +592,8 @@ fn validate_integerish_property(
     expected_type: &str,
     errors: &mut Vec<ValidationError>,
 ) {
-    match val.as_i64() {
-        Some(number) if val.is_i64() || is_integer_f64(val) => {
+    match integer_value(val) {
+        Some(number) => {
             let mut numeric_errors =
                 numeric_validator::validate_numeric(number, validator, path, prop_name);
             errors.append(&mut numeric_errors);
@@ -942,18 +942,24 @@ fn json_type_name(value: &Value) -> &'static str {
         // serde_json::Number is a bit annoying here -- it doesn't really tell
         // you int vs float directly. spent way too long on this before checking
         // the docs and the Number helpers properly
-        Value::Number(number) if number.is_f64() && !is_integer_f64(value) => "Double",
-        Value::Number(_) => "Integer",
+        Value::Number(_) if integer_value(value).is_some() => "Integer",
+        Value::Number(_) => "Double",
         Value::String(_) => "String",
         Value::Array(_) => "Array",
         Value::Object(_) => "Object",
     }
 }
 
-fn is_integer_f64(value: &Value) -> bool {
-    if let Some(number) = value.as_f64() {
-        (number.fract() == 0.0) && (number >= i64::MIN as f64) && (number <= i64::MAX as f64)
-    } else {
-        false
-    }
+/// Reads `value` as a Concerto `Integer` or `Long`.
+///
+/// concerto-core checks `Number.isInteger` after `JSON.parse`, where `30.0` and `30` are the
+/// same number, so a whole-number float counts as an integer too. Anything outside the `i64`
+/// range is rejected, since it can't be a Concerto `Long`.
+fn integer_value(value: &Value) -> Option<i64> {
+    value.as_i64().or_else(|| {
+        let number = value.as_f64()?;
+        // `i64::MAX as f64` rounds up to 2^63, which is already out of range, hence `<`
+        (number.fract() == 0.0 && number >= i64::MIN as f64 && number < i64::MAX as f64)
+            .then_some(number as i64)
+    })
 }
