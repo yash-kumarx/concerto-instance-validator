@@ -311,7 +311,7 @@ fn parse_scalar_decl(
         DOUBLE_SCALAR_DECL => {
             PropertyType::Double(parse_double_validator_node(val.get("validator"))?)
         }
-        STRING_SCALAR_DECL => PropertyType::String(parse_string_scalar_validator(val)?),
+        STRING_SCALAR_DECL => PropertyType::String(parse_string_validators(val)?),
         DATETIME_SCALAR_DECL => PropertyType::DateTime,
         other => {
             return Err(ConcertoError::Parse(format!(
@@ -398,7 +398,7 @@ fn parse_property(
     let is_array = val.get("isArray").and_then(Value::as_bool).unwrap_or(false);
 
     let property_type = match class {
-        STRING_PROP => PropertyType::String(parse_string_validator_node(val.get("validator"))?),
+        STRING_PROP => PropertyType::String(parse_string_validators(val)?),
         BOOLEAN_PROP => PropertyType::Boolean,
         INTEGER_PROP => PropertyType::Integer(parse_integer_validator_node(val.get("validator"))?),
         LONG_PROP => PropertyType::Long(parse_integer_validator_node(val.get("validator"))?),
@@ -524,7 +524,8 @@ fn parse_string_validator_node(
     }
 }
 
-fn parse_string_scalar_validator(root: &Value) -> Result<Option<StringValidator>, ConcertoError> {
+/// Reads the `validator` (regex) and `lengthValidator` of a string property or scalar.
+fn parse_string_validators(root: &Value) -> Result<Option<StringValidator>, ConcertoError> {
     let regex_validator = parse_string_validator_node(root.get("validator"))?;
     let length_validator = parse_string_validator_node(root.get("lengthValidator"))?;
 

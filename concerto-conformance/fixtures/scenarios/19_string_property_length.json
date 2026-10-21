@@ -1,0 +1,16 @@
+{
+  "name": "length validators on string properties are enforced",
+  "model_files": [
+    "models/length_model.json"
+  ],
+  "instance_file": "instances/profile_length_ascii.json",
+  "type_name": "org.length@1.0.0.Profile",
+  "expect": {
+    "valid": false,
+    "error_count": 2,
+    "error_paths": [
+      "$.initial",
+      "$.badge"
+    ]
+  }
+}

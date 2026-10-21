@@ -1,0 +1,33 @@
+{
+  "$class": "concerto.metamodel@1.0.0.Model",
+  "namespace": "org.length@1.0.0",
+  "declarations": [
+    {
+      "$class": "concerto.metamodel@1.0.0.ConceptDeclaration",
+      "name": "Profile",
+      "isAbstract": false,
+      "properties": [
+        {
+          "$class": "concerto.metamodel@1.0.0.StringProperty",
+          "name": "initial",
+          "isArray": false,
+          "isOptional": false,
+          "lengthValidator": {
+            "$class": "concerto.metamodel@1.0.0.StringLengthValidator",
+            "maxLength": 1
+          }
+        },
+        {
+          "$class": "concerto.metamodel@1.0.0.StringProperty",
+          "name": "badge",
+          "isArray": false,
+          "isOptional": false,
+          "lengthValidator": {
+            "$class": "concerto.metamodel@1.0.0.StringLengthValidator",
+            "minLength": 2
+          }
+        }
+      ]
+    }
+  ]
+}
